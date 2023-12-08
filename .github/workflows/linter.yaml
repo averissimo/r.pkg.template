@@ -96,6 +96,29 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Restore SD cache 💰
+        uses: actions/cache@v3
+        with:
+          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
+          path: ~/.staged.dependencies
+
+      - name: Run Staged dependencies 🎦
+        uses: insightsengineering/staged-dependencies-action@v1
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+        with:
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          enable-check: ${{ inputs.enable-staged-dependencies-check }}
+          run-system-dependencies: ${{ inputs.install-system-dependencies }}
+          direction: ${{ inputs.sd-direction }}
+
+      - name: Install R package 🚧
+        run: |
+          if (file.exists("renv.lock")) renv::restore()
+          install.packages(".", repos=NULL, type="source")
+        shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
       - name: Changed files 🖋️
         id: files
         uses: Ana06/get-changed-files@v2.2.0
