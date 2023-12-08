@@ -53,6 +53,15 @@ jobs:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
+      - name:
+        run: |
+          pwd
+          echo "------------------------------"
+          ls ~ -ln
+          echo "------------------------------"
+          ls -ln
+          echo "------------------------------"
+
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
